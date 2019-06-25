@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+    	stage('checkout') {
+    		steps {
+    			sh 'git clone https://github.com/teodutu/Jenkins-Test.git'
+    			sh 'cd Jenkins-Test'
+    		}
+    	}
     	stage('hello') {
     		steps {
     			echo "Gonna start building..."
