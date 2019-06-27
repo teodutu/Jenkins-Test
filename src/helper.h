@@ -6,6 +6,6 @@
 #include <ctype.h>
 
 char* merge_strings(char* str1, char* str2, int type);
-char is_palindrome(char* str);
+int is_palindrome(char* str);
 
 #endif

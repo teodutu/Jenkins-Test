@@ -16,16 +16,22 @@ pipeline {
     			sh 'gcc --version'
     		}
     	}
-        stage('build') {
+        stage('build everything') {
             steps {
                 sh 'make build -C Jenkins-Test && echo "success" || echo "problem"'
             }
         }
-        stage('test') {
+        stage('test merge_strings') {
         	steps {
-        		sh 'make run -C Jenkins-Test str1=gigel str2=gigi type=0'
-        		sh 'make run -C Jenkins-Test str1=gigel str2=gigi type=1'
+                echo "Testing \"merge_strings...\""
+        		sh 'make run -C Jenkins-Test arg=merge_strings'
         	}
+        }
+        stage('test is_palindrome') {
+            steps {
+                echo "Testing \"is_palindrome...\""
+                sh 'make run -C Jenkins-Test arg=is_palindrome'
+            }
         }
         stage('clean') {
         	steps {
@@ -35,4 +41,3 @@ pipeline {
         }
     }
 }
-

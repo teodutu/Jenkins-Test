@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-char is_palindrome(char* str)
+int is_palindrome(char* str)
 {
     char* s = str + strlen(str) - 1;
 
