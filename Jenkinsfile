@@ -1,9 +1,13 @@
 pipeline {
     agent any
+    environment {
+       repo = "Jenkins-Test"
+       tester = "${env.tester}"
+    }
     stages {
     	stage('checkout') {
     		steps {
-  				sh 'git clone https://github.com/teodutu/Jenkins-Test'
+  				sh 'git clone https://github.com/teodutu/${env.repo}'
     		}
     	}
     	stage('hello') {
@@ -16,27 +20,32 @@ pipeline {
     			sh 'gcc --version'
     		}
     	}
-        stage('build everything') {
+        stage('build helper') {
             steps {
-                sh 'make build -C Jenkins-Test && echo "success" || echo "problem"'
+                sh 'make build helper.o -C ${env.repo}/src && echo "Header built successully!" || echo "Failed to build!"'
             }
         }
-        stage('test merge_strings') {
+        stage('make and build tester') {
+            steps {
+                sh 'ruby ${env.repo}/generators/generate_test_runner.rb ${env.repo}/tests/${env.tester}' // autogenerate Runner file for the tests
+                sh 'make build -C ${env.repo}/tests && echo "Tester built successully!" || echo "Failed to build tester!"'
+            }
+        }
+        stage('test header') {
         	steps {
-                echo "Testing \"merge_strings...\""
-        		sh 'make run -C Jenkins-Test arg=merge_strings'
+                echo "Testing functions..."
+        		sh 'make run -C ${env.repo}/tests'
         	}
         }
-        stage('test is_palindrome') {
+        stage('build project') {
             steps {
-                echo "Testing \"is_palindrome...\""
-                sh 'make run -C Jenkins-Test arg=is_palindrome'
+                sh 'make build -C ${env.repo}/src && echo "Built successully!" || echo "Failed to build!"'
             }
         }
         stage('clean') {
         	steps {
-        		sh 'make -C Jenkins-Test clean'
-        		sh 'rm -rf Jenkins-Test'
+        		sh 'make -C ${env.repo} clean'
+        		sh 'rm -rf ${env.repo}'
         	}
         }
     }
